@@ -1,0 +1,88 @@
+/* MinesweeperGame.css */
+.minesweeper-game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  background-color: #e0e0e0;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.game-board {
+  display: flex;
+  flex-direction: column;
+  border: 3px solid #808080;
+  background-color: #c0c0c0;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+  background-color: #c0c0c0;
+  border: 2px outset #f0f0f0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.cell:active {
+  border-style: inset;
+}
+
+.cell.revealed {
+  background-color: #e0e0e0;
+  border: 1px solid #a0a0a0;
+}
+
+.cell.mine {
+  background-color: #ff6b6b;
+}
+
+.game-message {
+  font-size: 24px;
+  font-weight: bold;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  animation: fadeIn 0.5s;
+  width: 100%;
+}
+
+.game-over {
+  background-color: #ff6b6b;
+  color: white;
+}
+
+.game-won {
+  background-color: #4caf50;
+  color: white;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
