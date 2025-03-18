@@ -12,57 +12,51 @@ function App() {
   const [accounts, setAccounts] = useState([]);
   const [contract, setContract] = useState(null);
   const [currentContest, setCurrentContest] = useState(null);
-  const [gameState, setGameState] = useState("idle"); // 'idle', 'playing', 'completed'
+  const [gameState, setGameState] = useState("idle");
   const [gameId, setGameId] = useState(null);
   const [gameBoard, setGameBoard] = useState(null);
   const [commitment, setCommitment] = useState(null);
   const [startTime, setStartTime] = useState(null);
   const [moves, setMoves] = useState(0);
 
-  // Initialize Web3
   useEffect(() => {
     const initWeb3 = async () => {
-      // Modern browsers with MetaMask
       if (window.ethereum) {
         try {
-          // Request account access
           await window.ethereum.request({ method: "eth_requestAccounts" });
           const web3Instance = new Web3(window.ethereum);
           setWeb3(web3Instance);
 
-          // Get accounts
           const accts = await web3Instance.eth.getAccounts();
           setAccounts(accts);
 
-          // Initialize contract
           const contractInstance = new web3Instance.eth.Contract(
             MinesweeperChallengeABI,
             CONTRACT_ADDRESS
           );
           setContract(contractInstance);
 
-          // Get current contest info
           const contestId = await contractInstance.methods
             .currentContestId()
             .call();
           const contestInfo = await contractInstance.methods
-            .weeklyContests(contestId)
+            .getContestDetails(contestId)
             .call();
           setCurrentContest({
             id: contestId,
-            ...contestInfo,
+            startTime: contestInfo[0],
+            endTime: contestInfo[1],
+            entryFee: contestInfo[2],
+            totalPrizePool: contestInfo[3],
+            playerCount: contestInfo[4], // Updated to playerCount
           });
         } catch (error) {
           console.error("User denied account access or error:", error);
         }
-      }
-      // Legacy dapp browsers
-      else if (window.web3) {
+      } else if (window.web3) {
         const web3Instance = new Web3(window.web3.currentProvider);
         setWeb3(web3Instance);
-      }
-      // Non-dapp browsers
-      else {
+      } else {
         console.log(
           "Non-Ethereum browser detected. Consider installing MetaMask!"
         );
@@ -72,40 +66,33 @@ function App() {
     initWeb3();
   }, []);
 
-  // Start a new game
   const startGame = async () => {
     if (!contract || !accounts[0]) return;
 
     try {
-      // Step 1: Get new game from server
       const response = await fetch("/api/new-game", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ playerAddress: accounts[0] }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          playerAddress: accounts[0],
+          contestId: currentContest.id,
+        }),
       });
 
       const data = await response.json();
       setGameId(data.gameId);
       setCommitment(data.commitment);
 
-      // Step 2: Enter the blockchain contest with the commitment
       await contract.methods
         .enterContest(currentContest.id, data.commitment)
-        .send({
-          from: accounts[0],
-          value: currentContest.entryFee,
-        });
+        .send({ from: accounts[0], value: currentContest.entryFee });
 
-      // Step 3: Fetch the game board from server
       const boardResponse = await fetch(
         `/api/game/${data.gameId}?playerAddress=${accounts[0]}`
       );
       const boardData = await boardResponse.json();
       setGameBoard(boardData.board);
 
-      // Step 4: Start the game
       setGameState("playing");
       setStartTime(Date.now());
       setMoves(0);
@@ -114,35 +101,29 @@ function App() {
     }
   };
 
-  // Handle game completion
   const handleGameComplete = async () => {
     if (!contract || !accounts[0] || !gameId) return;
 
     const endTime = Date.now();
-    const timeTaken = Math.floor((endTime - startTime) / 1000); // in seconds
+    const timeTaken = Math.floor((endTime - startTime) / 1000);
 
     try {
-      // Step 1: Get verification data from server
       const response = await fetch("/api/verify", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           gameId,
           moves,
           timeTaken,
+          playerAddress: accounts[0],
         }),
       });
 
       const data = await response.json();
 
-      // Step 2: Submit completion to the blockchain
       await contract.methods
         .submitGameCompletion(currentContest.id, moves, data.secret, data.proof)
-        .send({
-          from: accounts[0],
-        });
+        .send({ from: accounts[0] });
 
       setGameState("completed");
     } catch (error) {
@@ -150,10 +131,7 @@ function App() {
     }
   };
 
-  // Handle move counter
-  const handleMove = () => {
-    setMoves(moves + 1);
-  };
+  const handleMove = () => setMoves(moves + 1);
 
   return (
     <div className="app-container">
@@ -185,7 +163,8 @@ function App() {
               Prize Pool:{" "}
               {web3.utils.fromWei(currentContest.totalPrizePool, "ether")} ETH
             </p>
-            <p>Players: {currentContest.players.length}</p>
+            <p>Players: {currentContest.playerCount}</p>{" "}
+            {/* Updated to playerCount */}
             <button onClick={startGame} className="start-button">
               Enter Contest
             </button>
@@ -214,6 +193,9 @@ function App() {
               Time taken: {Math.floor((Date.now() - startTime) / 1000)} seconds
             </p>
             <p>Your score has been submitted to the blockchain!</p>
+            <p>
+              Note: Prizes will be distributed manually by the contest owner.
+            </p>
             <button onClick={() => setGameState("idle")}>Play Again</button>
           </div>
         )}

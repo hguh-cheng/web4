@@ -1,293 +1,162 @@
 [
   {
+    "type": "constructor",
     "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    "stateMutability": "nonpayable"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "contestId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "startTime",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "endTime",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "entryFee",
-        "type": "uint256"
-      }
-    ],
+    "type": "event",
     "name": "ContestCreated",
-    "type": "event"
+    "inputs": [
+      { "name": "contestId", "type": "uint256", "indexed": true },
+      { "name": "startTime", "type": "uint256", "indexed": false },
+      { "name": "endTime", "type": "uint256", "indexed": false },
+      { "name": "entryFee", "type": "uint256", "indexed": false }
+    ]
   },
   {
-    "anonymous": false,
+    "type": "event",
+    "name": "PlayerEntered",
     "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "player",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "contestId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "moves",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "timeTaken",
-        "type": "uint256"
-      }
-    ],
+      { "name": "contestId", "type": "uint256", "indexed": true },
+      { "name": "player", "type": "address", "indexed": true },
+      { "name": "commitment", "type": "bytes32", "indexed": false }
+    ]
+  },
+  {
+    "type": "event",
     "name": "GameCompleted",
-    "type": "event"
+    "inputs": [
+      { "name": "contestId", "type": "uint256", "indexed": true },
+      { "name": "player", "type": "address", "indexed": true },
+      { "name": "moves", "type": "uint256", "indexed": false },
+      { "name": "timeTaken", "type": "uint256", "indexed": false }
+    ]
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "player",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "contestId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
-      }
-    ],
-    "name": "GameStarted",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "OwnershipTransferred",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "contestId",
-        "type": "uint256"
-      }
-    ],
+    "type": "event",
     "name": "PrizesDistributed",
-    "type": "event"
-  },
-  {
-    "inputs": [],
-    "name": "currentContestId",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_startTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_endTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_entryFee",
-        "type": "uint256"
-      }
-    ],
+      { "name": "contestId", "type": "uint256", "indexed": true },
+      { "name": "totalPrize", "type": "uint256", "indexed": false }
+    ]
+  },
+  {
+    "type": "function",
     "name": "createWeeklyContest",
+    "inputs": [
+      { "name": "_startTime", "type": "uint256" },
+      { "name": "_endTime", "type": "uint256" },
+      { "name": "_entryFee", "type": "uint256" }
+    ],
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_contestId",
-        "type": "uint256"
-      }
-    ],
-    "name": "distributePrizes",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_contestId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "_boardCommitment",
-        "type": "bytes32"
-      }
-    ],
+    "type": "function",
     "name": "enterContest",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_contestId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_moves",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "_boardSecret",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "_proof",
-        "type": "bytes32"
-      }
+      { "name": "_contestId", "type": "uint256" },
+      { "name": "_commitment", "type": "bytes32" }
     ],
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
     "name": "submitGameCompletion",
+    "inputs": [
+      { "name": "_contestId", "type": "uint256" },
+      { "name": "_moves", "type": "uint256" },
+      { "name": "_secret", "type": "bytes32" },
+      { "name": "_proof", "type": "bytes32" }
+    ],
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "transferOwnership",
+    "type": "function",
+    "name": "distributePrizes",
+    "inputs": [{ "name": "_contestId", "type": "uint256" }],
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "weeklyContests",
+    "type": "function",
+    "name": "updatePlatformFee",
+    "inputs": [{ "name": "_newFeePercentage", "type": "uint256" }],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "updateFeeReceiver",
+    "inputs": [{ "name": "_newReceiver", "type": "address" }],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "getContestDetails",
+    "inputs": [{ "name": "_contestId", "type": "uint256" }],
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "startTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "endTime",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "entryFee",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "totalPrizePool",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "fundsDistributed",
-        "type": "bool"
-      }
+      { "name": "startTime", "type": "uint256" },
+      { "name": "endTime", "type": "uint256" },
+      { "name": "entryFee", "type": "uint256" },
+      { "name": "totalPrizePool", "type": "uint256" },
+      { "name": "playerCount", "type": "uint256" }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "hasPlayerEntered",
+    "inputs": [
+      { "name": "_contestId", "type": "uint256" },
+      { "name": "_player", "type": "address" }
+    ],
+    "outputs": [{ "name": "", "type": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getPlayerScore",
+    "inputs": [
+      { "name": "_contestId", "type": "uint256" },
+      { "name": "_player", "type": "address" }
+    ],
+    "outputs": [
+      { "name": "moves", "type": "uint256" },
+      { "name": "time", "type": "uint256" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "owner",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "currentContestId",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "platformFeePercentage",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "platformFeeReceiver",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address" }],
+    "stateMutability": "view"
   }
 ]

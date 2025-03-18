@@ -1,18 +1,19 @@
-// scripts/deploy.js
 const { ethers } = require("hardhat");
 
 async function main() {
   console.log("Deploying MinesweeperChallenge contract...");
 
-  // Get the ContractFactory for MinesweeperChallenge
+  // Get the ContractFactory (Vyper contracts need to be compiled differently)
   const MinesweeperChallenge = await ethers.getContractFactory(
-    "MinesweeperChallenge"
+    "MinesweeperChallenge",
+    {
+      // Specify that this is a Vyper contract
+      vyper: true,
+    }
   );
 
   // Deploy the contract
   const minesweeperChallenge = await MinesweeperChallenge.deploy();
-
-  // Wait for deployment to complete
   await minesweeperChallenge.deployed();
 
   console.log(
@@ -20,7 +21,7 @@ async function main() {
     minesweeperChallenge.address
   );
 
-  // Create an initial contest (starts now, ends in 7 days, 0.01 ETH entry fee)
+  // Create an initial contest
   const now = Math.floor(Date.now() / 1000);
   const oneWeekFromNow = now + 7 * 24 * 60 * 60;
   const entryFee = ethers.utils.parseEther("0.01");
@@ -31,8 +32,6 @@ async function main() {
     oneWeekFromNow,
     entryFee
   );
-
-  // Wait for transaction to be mined
   await tx.wait();
 
   console.log("Weekly contest created successfully!");
@@ -42,9 +41,10 @@ async function main() {
 
   console.log("\nVerifying contract on Etherscan...");
   try {
-    await run("verify:verify", {
+    await hre.run("verify:verify", {
       address: minesweeperChallenge.address,
       constructorArguments: [],
+      contract: "MinesweeperChallenge.vy:MinesweeperChallenge", // Adjust for Vyper
     });
     console.log("Contract verified on Etherscan!");
   } catch (error) {
